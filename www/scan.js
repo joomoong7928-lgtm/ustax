@@ -62,6 +62,8 @@ function parseAmount(raw) {
   let t = raw.replace(/\s+/g, '').replace(/원$/, '').replace(/[Oo]/g, '0');
   const negative = /^[-−–]/.test(t);
   t = t.replace(/^[-−–=]+/, '');
+  // "-4,186,681원"을 "-4,186,6812"로 읽는 경우: 세 자리 묶음 뒤 숫자 하나는 '원'을 잘못 읽은 것
+  if (/^\d{1,3}(,\d{3})+\d$/.test(t)) t = t.slice(0, -1);
   if (!/^\d{1,3}(,\d{3})*$|^\d+$/.test(t)) return null;
   const n = Number(t.replace(/,/g, ''));
   return negative ? -n : n;

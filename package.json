@@ -1,6 +1,6 @@
 {
   "name": "ustax",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "description": "해외주식 양도세 합산 계산기",
   "scripts": {

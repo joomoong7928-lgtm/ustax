@@ -167,9 +167,11 @@ function avatar(profile, name) {
   return el('span', `avatar ${profile || ''}`, (name || '?').trim().charAt(0));
 }
 
+// 오늘이면 시각, 아니면 날짜만 (한 줄에 들어가도록)
 function fmtTime(ts) {
   const d = new Date(ts);
-  return `${d.getMonth() + 1}월 ${d.getDate()}일 ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  if (d.toDateString() !== new Date().toDateString()) return `${d.getMonth() + 1}월 ${d.getDate()}일`;
+  return `오늘 ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
 function brokerMeta(b) {
@@ -177,9 +179,9 @@ function brokerMeta(b) {
   if (b.source === 'scan') {
     const ok = b.verified === true;
     meta.classList.add(ok ? 'ok' : 'warn');
-    meta.append(iconEl(ok ? ICON.check : ICON.alert), `${fmtTime(b.updatedAt)} 캡처 · ${ok ? '검산 완료' : '확인 필요'}`);
+    meta.append(iconEl(ok ? ICON.check : ICON.alert), `${fmtTime(b.updatedAt)} · ${ok ? '검산 완료' : '확인 필요'}`);
   } else if (b.source === 'manual') {
-    meta.append(b.updatedAt ? `${fmtTime(b.updatedAt)} 직접 입력` : '직접 입력');
+    meta.append(b.updatedAt ? `${fmtTime(b.updatedAt)} · 직접 입력` : '직접 입력');
   } else {
     meta.append('캡처를 올려 주세요');
   }
@@ -310,11 +312,15 @@ $('fileInput').addEventListener('change', async (e) => {
   prog.append(el('div', 'spinner'), status);
   openSheet('캡처 읽는 중', prog);
 
+  // 사진 선택기의 접근 권한이 인식 도중 끊길 수 있어 고른 파일을 먼저 모두 읽어 둔다
+  status.textContent = '사진을 불러오는 중';
+  const images = await Promise.all(files.map((f) => readFile(f).catch((err) => err)));
   const results = [];
-  for (let i = 0; i < files.length; i++) {
-    status.textContent = files.length > 1 ? `${i + 1} / ${files.length}장 읽는 중` : '금액을 찾고 있어요';
+  for (let i = 0; i < images.length; i++) {
+    status.textContent = images.length > 1 ? `${i + 1} / ${images.length}장 읽는 중` : '금액을 찾고 있어요';
     try {
-      const { lines } = await TextScanner.recognize({ image: await readFile(files[i]) });
+      if (images[i] instanceof Error) throw images[i];
+      const { lines } = await TextScanner.recognize({ image: images[i] });
       results.push(scanLines(lines || []));
     } catch (err) {
       results.push({ error: (err && err.message) || '읽지 못했어요' });
