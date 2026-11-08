@@ -9,87 +9,94 @@
 </head>
 <body>
   <header class="topbar">
-    <button class="icon-btn" id="prevYear" aria-label="이전 연도">‹</button>
-    <h1><span id="yearLabel">2026</span>년 양도세</h1>
-    <button class="icon-btn" id="nextYear" aria-label="다음 연도">›</button>
+    <button class="icon-btn" id="prevYear" type="button" aria-label="이전 연도">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+    <span class="year"><span id="yearLabel">2026</span>년</span>
+    <button class="icon-btn" id="nextYear" type="button" aria-label="다음 연도">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+    </button>
   </header>
 
   <main>
-    <!-- 결과 요약 -->
-    <section class="card summary" aria-live="polite">
-      <p class="summary-label">예상 양도소득세 <small>(지방세 포함 22%)</small></p>
-      <p class="summary-tax" id="sumTax">0원</p>
-      <dl class="breakdown">
-        <div><dt>합산 순손익</dt><dd id="sumNet">0원</dd></div>
-        <div><dt>기본공제</dt><dd id="sumDeduct">-2,500,000원</dd></div>
-        <div><dt>과세표준</dt><dd id="sumBase">0원</dd></div>
-      </dl>
-      <p class="hint" id="sumHint"></p>
+    <!-- 결과 -->
+    <section class="hero" aria-live="polite">
+      <p class="hero-q">올해 나의 양도소득세 예상은?</p>
+      <p class="hero-amount" id="sumTax">0원</p>
+      <p class="hero-sub" id="heroSub"></p>
+      <p class="insight" id="sumHint"></p>
+      <details class="calc">
+        <summary>계산 과정 보기</summary>
+        <dl class="breakdown">
+          <div><dt>증권사 합산 순손익</dt><dd id="sumNet">0원</dd></div>
+          <div id="riaRow" hidden><dt>RIA 공제</dt><dd id="sumRia">0원</dd></div>
+          <div><dt>기본공제 (1년 1회)</dt><dd id="sumDeduct">0원</dd></div>
+          <div><dt>과세표준</dt><dd id="sumBase">0원</dd></div>
+          <div><dt>세율</dt><dd>22% (지방세 포함)</dd></div>
+        </dl>
+      </details>
     </section>
 
-    <!-- 증권사별 실현손익 -->
+    <!-- 증권사별 현황 -->
     <section class="card">
       <div class="card-head">
-        <h2>증권사별 실현손익</h2>
-        <button class="text-btn" id="addBroker">+ 증권사 추가</button>
+        <h2>증권사별 현황</h2>
+        <button class="text-btn" id="addBroker" type="button">직접 추가</button>
       </div>
-      <p class="desc">각 증권사 앱의 양도세 화면에서 <b>기본공제 250만원을 빼기 전</b> 올해 양도차익(원화, 수수료 차감 후)을 입력하세요. 공제는 이 앱이 합산 후 한 번만 적용해요.</p>
-      <ul class="list" id="brokerList"></ul>
-    </section>
-
-    <!-- 증권사별 안내 -->
-    <section class="card">
-      <h2>증권사별 확인 방법</h2>
-      <p class="desc">각 증권사 앱에서 입력할 금액을 어디서 보는지 안내해요.</p>
-      <ul class="guide-list" id="guideList"></ul>
+      <ul class="brokers" id="brokerList"></ul>
+      <button class="link-row" id="openGuide" type="button">
+        <span>어떤 화면을 캡처하나요?</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+      </button>
     </section>
 
     <!-- 연말 매도 시뮬레이션 -->
     <section class="card">
       <div class="card-head">
         <h2>연말 매도 시뮬레이션</h2>
-        <button class="text-btn" id="addHolding">+ 종목 추가</button>
+        <button class="text-btn" id="addHolding" type="button">종목 추가</button>
       </div>
-      <p class="desc">보유 종목의 <b>원화 평가손익</b>을 넣고 매도할 종목을 체크하면 세금 변화를 보여줘요.</p>
+      <p class="desc">보유 종목의 원화 평가손익을 넣고 팔 종목을 체크하면 세금이 어떻게 바뀌는지 보여줘요.</p>
       <ul class="list" id="holdingList"></ul>
       <div class="sim-result" id="simResult" hidden>
         <dl class="breakdown">
-          <div><dt>매도 반영 순손익</dt><dd id="simNet">0원</dd></div>
           <div><dt>매도 후 예상 세액</dt><dd id="simTax">0원</dd></div>
-          <div><dt>현재 대비</dt><dd id="simDelta">0원</dd></div>
+          <div><dt>지금보다</dt><dd id="simDelta">0원</dd></div>
         </dl>
       </div>
     </section>
 
-    <!-- 일정 -->
+    <!-- 연말 매도 마감 -->
     <section class="card">
       <h2>연말 매도 마감</h2>
       <ul class="schedule" id="schedule"></ul>
-      <p class="note">미국 주식은 체결 다음 영업일(T+1)에 결제되고, 양도세는 <b>결제일</b> 기준으로 연도가 정해져요. 정확한 마감은 반드시 각 증권사 공지로 확인하세요.</p>
+      <p class="note">미국 주식은 체결 다음 영업일(T+1)에 결제되고, 양도세는 결제일 기준으로 연도가 정해져요. 정확한 마감은 각 증권사 공지로 확인하세요.</p>
     </section>
 
-    <p class="disclaimer">이 앱은 미리 세금을 가늠해보는 참고용 계산기예요. 실제 세액은 신고할 때 확정돼요. 입력한 내용은 이 기기에만 저장돼요.</p>
+    <p class="disclaimer">미리 세금을 가늠해보는 참고용 계산기예요. 실제 세액은 신고할 때 확정돼요. 캡처와 입력값은 이 휴대폰 안에서만 처리·저장돼요.</p>
   </main>
 
-  <dialog class="sheet" id="guideSheet" aria-labelledby="guideTitle">
+  <div class="bottom-bar">
+    <button class="cta" id="scanBtn" type="button">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
+      증권사 캡처로 업데이트
+    </button>
+  </div>
+
+  <input type="file" id="fileInput" accept="image/*" multiple hidden>
+
+  <dialog class="sheet" id="sheet" aria-labelledby="sheetTitle" tabindex="-1">
     <div class="sheet-head">
-      <h2 id="guideTitle"></h2>
-      <button class="icon-btn" type="button" id="guideClose" aria-label="닫기">×</button>
+      <h2 id="sheetTitle"></h2>
+      <button class="icon-btn" type="button" id="sheetClose" aria-label="닫기">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
     </div>
-    <div class="sheet-body" id="guideBody"></div>
+    <div class="sheet-body" id="sheetBody"></div>
+    <div class="sheet-actions" id="sheetActions"></div>
   </dialog>
 
-  <template id="brokerTpl">
-    <li class="row broker-row">
-      <input class="name" type="text" maxlength="20" aria-label="증권사 이름">
-      <div class="amount-wrap">
-        <button class="sign" type="button" aria-label="이익/손실 전환">+</button>
-        <input class="amount" type="text" inputmode="numeric" placeholder="0" aria-label="실현손익(원)">
-        <span class="unit">원</span>
-      </div>
-      <button class="del" type="button" aria-label="삭제">×</button>
-    </li>
-  </template>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <template id="holdingTpl">
     <li class="row holding-row">
@@ -104,7 +111,9 @@
     </li>
   </template>
 
+  <script src="capacitor.js"></script>
   <script src="guides.js"></script>
+  <script src="scan.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
