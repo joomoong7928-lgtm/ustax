@@ -142,8 +142,6 @@ function renderSchedule() {
   } else {
     items.push(['올해 귀속 마지막 매도', '증권사 연말 공지 확인']);
   }
-  items.push(['증권사 신고대행 신청', `${y + 1}년 3~4월경 (기간 짧음)`]);
-  items.push(['확정신고·납부', `${y + 1}년 5월 1일 ~ 5월 31일`]);
 
   $('schedule').innerHTML = items
     .map(([k, v]) => `<li><span class="k">${k}</span><span class="v">${v}</span></li>`)
@@ -184,20 +182,15 @@ function openGuide(g) {
   body.innerHTML = '';
   if (g.method) body.append(el('p', 'method', g.method));
 
-  g.sections.forEach((s, i) => {
-    const block = el('section', 'step-block');
-    const h = el('h3', null, `${i + 1}. ${s.title}`);
-    h.append(el('span', 'badge', s.where));
-    block.append(h);
-    if (s.note) block.append(el('p', 'note', s.note));
-    const ol = el('ol');
-    s.steps.forEach((step) => ol.append(el('li', null, step)));
-    block.append(ol);
-    body.append(block);
-  });
+  const block = el('section', 'step-block');
+  block.append(el('h3', null, `${g.app} 앱에서 올해 양도차익 확인`));
+  const ol = el('ol');
+  g.steps.forEach((step) => ol.append(el('li', null, step)));
+  block.append(ol);
+  body.append(block);
 
   const foot = el('p', 'sheet-foot');
-  foot.append(`메뉴 이름이 다르면 앱 검색에서 “양도세”를 검색하세요. 그래도 없으면 고객센터 `);
+  foot.append(`메뉴 이름이 다르면 앱 검색에서 “양도세”를 검색하세요. 찾기 어려우면 고객센터 `);
   const tel = el('a', null, g.phone);
   tel.href = `tel:${g.phone}`;
   foot.append(tel, `. (안내 기준: ${GUIDE_CHECKED})`);
