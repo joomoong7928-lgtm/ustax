@@ -142,13 +142,77 @@ function renderSchedule() {
   } else {
     items.push(['올해 귀속 마지막 매도', '증권사 연말 공지 확인']);
   }
-  items.push(['증권사 신고대행 신청', `${y + 1}년 2~4월경 (증권사별 상이)`]);
+  items.push(['증권사 신고대행 신청', `${y + 1}년 3~4월경 (기간 짧음)`]);
   items.push(['확정신고·납부', `${y + 1}년 5월 1일 ~ 5월 31일`]);
 
   $('schedule').innerHTML = items
     .map(([k, v]) => `<li><span class="k">${k}</span><span class="v">${v}</span></li>`)
     .join('');
 }
+
+/* ---------- 증권사별 안내 ---------- */
+
+const el = (tag, cls, text) => {
+  const node = document.createElement(tag);
+  if (cls) node.className = cls;
+  if (text != null) node.textContent = text;
+  return node;
+};
+
+const CHEVRON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>';
+
+function renderGuides() {
+  const list = $('guideList');
+  list.innerHTML = '';
+  GUIDES.forEach((g) => {
+    const btn = el('button');
+    btn.type = 'button';
+    const label = el('span');
+    label.append(el('span', null, g.name), el('span', 'sub', ` · ${g.app} 앱`));
+    btn.append(label);
+    btn.insertAdjacentHTML('beforeend', CHEVRON);
+    btn.addEventListener('click', () => openGuide(g));
+    const li = el('li');
+    li.append(btn);
+    list.append(li);
+  });
+}
+
+function openGuide(g) {
+  $('guideTitle').textContent = g.name;
+  const body = $('guideBody');
+  body.innerHTML = '';
+  if (g.method) body.append(el('p', 'method', g.method));
+
+  g.sections.forEach((s, i) => {
+    const block = el('section', 'step-block');
+    const h = el('h3', null, `${i + 1}. ${s.title}`);
+    h.append(el('span', 'badge', s.where));
+    block.append(h);
+    if (s.note) block.append(el('p', 'note', s.note));
+    const ol = el('ol');
+    s.steps.forEach((step) => ol.append(el('li', null, step)));
+    block.append(ol);
+    body.append(block);
+  });
+
+  const foot = el('p', 'sheet-foot');
+  foot.append(`메뉴 이름이 다르면 앱 검색에서 “양도세”를 검색하세요. 그래도 없으면 고객센터 `);
+  const tel = el('a', null, g.phone);
+  tel.href = `tel:${g.phone}`;
+  foot.append(tel, `. (안내 기준: ${GUIDE_CHECKED})`);
+  body.append(foot);
+
+  const sheet = $('guideSheet');
+  sheet.showModal();
+  sheet.scrollTop = 0;
+}
+
+$('guideClose').addEventListener('click', () => $('guideSheet').close());
+$('guideSheet').addEventListener('click', (e) => {
+  // 시트 바깥(배경)을 누르면 닫기
+  if (e.target === e.currentTarget) e.currentTarget.close();
+});
 
 function hintFor(net) {
   if (net <= BASIC_DEDUCTION) {
@@ -215,4 +279,5 @@ $('addHolding').addEventListener('click', () => {
 $('prevYear').addEventListener('click', () => { state.year -= 1; renderAll(); });
 $('nextYear').addEventListener('click', () => { state.year += 1; renderAll(); });
 
+renderGuides();
 renderAll();

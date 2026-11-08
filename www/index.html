@@ -33,8 +33,16 @@
         <h2>증권사별 실현손익</h2>
         <button class="text-btn" id="addBroker">+ 증권사 추가</button>
       </div>
-      <p class="desc">각 증권사 앱에서 <b>“양도세”</b>를 검색해 나오는 화면의 <b>올해 원화 양도차익(수수료 차감 후)</b>을 입력하세요.</p>
+      <p class="desc">각 증권사 앱의 양도세 화면에서 <b>기본공제 250만원을 빼기 전</b> 올해 양도차익(원화, 수수료 차감 후)을 입력하세요. 공제는 이 앱이 합산 후 한 번만 적용해요.</p>
       <ul class="list" id="brokerList"></ul>
+    </section>
+
+    <!-- 증권사별 안내 -->
+    <section class="card">
+      <h2>증권사별 확인 방법</h2>
+      <p class="desc">금액을 어디서 보는지, 신고대행에 낼 계산내역서는 어디서 받는지 안내해요.</p>
+      <ul class="guide-list" id="guideList"></ul>
+      <p class="tip"><b>신고대행은 한 증권사에만</b> 신청하세요. 나머지 증권사에서 계산내역서를 받아 그 한 곳에 제출하면 합산 신고돼요.</p>
     </section>
 
     <!-- 연말 매도 시뮬레이션 -->
@@ -64,6 +72,14 @@
     <p class="disclaimer">이 앱은 참고용 계산기예요. 실제 세액은 증권사 신고대행 또는 홈택스 신고 결과를 따르세요. 입력한 내용은 이 기기에만 저장돼요.</p>
   </main>
 
+  <dialog class="sheet" id="guideSheet" aria-labelledby="guideTitle">
+    <div class="sheet-head">
+      <h2 id="guideTitle"></h2>
+      <button class="icon-btn" type="button" id="guideClose" aria-label="닫기">×</button>
+    </div>
+    <div class="sheet-body" id="guideBody"></div>
+  </dialog>
+
   <template id="brokerTpl">
     <li class="row broker-row">
       <input class="name" type="text" maxlength="20" aria-label="증권사 이름">
@@ -89,6 +105,7 @@
     </li>
   </template>
 
+  <script src="guides.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
