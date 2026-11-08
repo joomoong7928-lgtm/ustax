@@ -183,11 +183,17 @@ function openGuide(g) {
   if (g.method) body.append(el('p', 'method', g.method));
 
   const block = el('section', 'step-block');
-  block.append(el('h3', null, `${g.app} 앱에서 올해 양도차익 확인`));
+  block.append(el('h3', null, `“${g.screen}” 화면 찾기`));
   const ol = el('ol');
   g.steps.forEach((step) => ol.append(el('li', null, step)));
   block.append(ol);
   body.append(block);
+
+  const pick = el('div', 'field-box');
+  pick.append(el('p', 'field-label', '이 숫자를 입력하세요'), el('p', 'field-name', g.field));
+  if (g.fieldNote) pick.append(el('p', 'field-note', g.fieldNote));
+  body.append(pick);
+  body.append(el('p', 'avoid', g.avoid));
 
   const foot = el('p', 'sheet-foot');
   foot.append(`메뉴 이름이 다르면 앱 검색에서 “양도세”를 검색하세요. 찾기 어려우면 고객센터 `);
