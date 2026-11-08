@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <title>해외주식 양도세 합산</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <button class="icon-btn" id="prevYear" aria-label="이전 연도">‹</button>
+    <h1><span id="yearLabel">2026</span>년 양도세</h1>
+    <button class="icon-btn" id="nextYear" aria-label="다음 연도">›</button>
+  </header>
+
+  <main>
+    <!-- 결과 요약 -->
+    <section class="card summary" aria-live="polite">
+      <p class="summary-label">예상 양도소득세 <small>(지방세 포함 22%)</small></p>
+      <p class="summary-tax" id="sumTax">0원</p>
+      <dl class="breakdown">
+        <div><dt>합산 순손익</dt><dd id="sumNet">0원</dd></div>
+        <div><dt>기본공제</dt><dd id="sumDeduct">-2,500,000원</dd></div>
+        <div><dt>과세표준</dt><dd id="sumBase">0원</dd></div>
+      </dl>
+      <p class="hint" id="sumHint"></p>
+    </section>
+
+    <!-- 증권사별 실현손익 -->
+    <section class="card">
+      <div class="card-head">
+        <h2>증권사별 실현손익</h2>
+        <button class="text-btn" id="addBroker">+ 증권사 추가</button>
+      </div>
+      <p class="desc">각 증권사 앱에서 <b>“양도세”</b>를 검색해 나오는 화면의 <b>올해 원화 양도차익(수수료 차감 후)</b>을 입력하세요.</p>
+      <ul class="list" id="brokerList"></ul>
+    </section>
+
+    <!-- 연말 매도 시뮬레이션 -->
+    <section class="card">
+      <div class="card-head">
+        <h2>연말 매도 시뮬레이션</h2>
+        <button class="text-btn" id="addHolding">+ 종목 추가</button>
+      </div>
+      <p class="desc">보유 종목의 <b>원화 평가손익</b>을 넣고 매도할 종목을 체크하면 세금 변화를 보여줘요.</p>
+      <ul class="list" id="holdingList"></ul>
+      <div class="sim-result" id="simResult" hidden>
+        <dl class="breakdown">
+          <div><dt>매도 반영 순손익</dt><dd id="simNet">0원</dd></div>
+          <div><dt>매도 후 예상 세액</dt><dd id="simTax">0원</dd></div>
+          <div><dt>현재 대비</dt><dd id="simDelta">0원</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- 일정 -->
+    <section class="card">
+      <h2>일정</h2>
+      <ul class="schedule" id="schedule"></ul>
+      <p class="note">미국 주식은 체결 다음 영업일(T+1)에 결제되고, 양도세는 <b>결제일</b> 기준으로 연도가 정해져요. 정확한 마감은 반드시 각 증권사 공지로 확인하세요.</p>
+    </section>
+
+    <p class="disclaimer">이 앱은 참고용 계산기예요. 실제 세액은 증권사 신고대행 또는 홈택스 신고 결과를 따르세요. 입력한 내용은 이 기기에만 저장돼요.</p>
+  </main>
+
+  <template id="brokerTpl">
+    <li class="row broker-row">
+      <input class="name" type="text" maxlength="20" aria-label="증권사 이름">
+      <div class="amount-wrap">
+        <button class="sign" type="button" aria-label="이익/손실 전환">+</button>
+        <input class="amount" type="text" inputmode="numeric" placeholder="0" aria-label="실현손익(원)">
+        <span class="unit">원</span>
+      </div>
+      <button class="del" type="button" aria-label="삭제">×</button>
+    </li>
+  </template>
+
+  <template id="holdingTpl">
+    <li class="row holding-row">
+      <label class="check"><input class="sel" type="checkbox" aria-label="매도 예정"></label>
+      <input class="name" type="text" maxlength="20" placeholder="종목명" aria-label="종목명">
+      <div class="amount-wrap">
+        <button class="sign" type="button" aria-label="이익/손실 전환">+</button>
+        <input class="amount" type="text" inputmode="numeric" placeholder="0" aria-label="평가손익(원)">
+        <span class="unit">원</span>
+      </div>
+      <button class="del" type="button" aria-label="삭제">×</button>
+    </li>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
